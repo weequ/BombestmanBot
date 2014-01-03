@@ -124,6 +124,7 @@ public class BombestmanBot {
         String line;
         while (!(line = read.readLine()).isEmpty()) {
         }
+        read.readLine();
     }
     
     
@@ -140,8 +141,11 @@ public class BombestmanBot {
     
     
     public static void readTurns() throws IOException {
-        String turnsLeftLine = read.readLine();
-        System.out.println("turnsLeft:"+turnsLeftLine);
+        String line;
+        while (!(line = read.readLine()).startsWith("Turns left:")) {
+            
+        }
+        System.out.println("turnsLeft:"+line);
     }
     
     
@@ -150,6 +154,7 @@ public class BombestmanBot {
         String[] lines = new String[mapHeight];
         for (int i = 0; i < mapHeight; i++) {
             lines[i] = read.readLine();
+            System.out.println(lines[i]);
         }
         grid.update(lines);
     }
@@ -184,7 +189,8 @@ public class BombestmanBot {
         List<Point> bombs = new ArrayList();
         while (!(line = read.readLine()).isEmpty()) {
             bombs.add(parseCoordinates(line));
-        } 
+        }
+        //read.readLine();
         grid.getBombField().update(bombs);
     }
 

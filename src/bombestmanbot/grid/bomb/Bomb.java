@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package bombestmanbot.grid.bomb;
 
 import bombestmanbot.Extramath;
@@ -13,10 +9,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Antti
- */
 public class Bomb {
     public int age;
     public int dices;
@@ -27,10 +19,6 @@ public class Bomb {
     
     public Bomb(int force, int dices, int sides, Tile tile) {
         this.tile = tile;
-        if (tile != null) {
-            tile.setBomb(this);
-            tile.getGrid().getBombField().addBomb(this);
-        }
         this.force = force;
         this.dices = dices;
         this.sides = sides;

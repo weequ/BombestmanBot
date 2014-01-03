@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package bombestmanbot.grid;
 
 import bombestmanbot.BombestmanBot;
@@ -18,7 +14,7 @@ public class Grid {
     private List<Point> playerCoords;
     
     public Grid(int width, int heigth) {
-        tiles = new Tile[width][heigth];
+        tiles = new Tile[heigth][width];
         for (int y = 0; y < tiles.length; y++) {
             for (int x = 0; x < tiles[y].length; x++) {
                 Tile tile = new Tile(this, x, y, '?');

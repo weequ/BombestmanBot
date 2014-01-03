@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package bombestmanbot.grid.bomb;
 
 import bombestmanbot.BombestmanBot;
@@ -12,13 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-/**
- *
- * @author Antti
- */
+
 public class BombField {
     
     private List<Bomb> bombs;
@@ -51,7 +42,10 @@ public class BombField {
                     continue outerloop;
                 }
             }
-            Bomb bomb = new Bomb(BombestmanBot.bombForce, BombestmanBot.bombTimeDice, BombestmanBot.bombeTimerSides, grid.getTile(x, y));
+            Tile bombTile = grid.getTile(x, y);
+            Bomb bomb = new Bomb(BombestmanBot.bombForce, BombestmanBot.bombTimeDice, BombestmanBot.bombeTimerSides, bombTile);
+            bombTile.setBomb(bomb);
+            addBomb(bomb);
         }
     }
     

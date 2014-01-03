@@ -1,7 +1,6 @@
 package bombestmanbot;
 
 import bombestmanbot.grid.Grid;
-import bombestmanbot.grid.bomb.BombField;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -105,7 +104,9 @@ public class BombestmanBot {
     public static void readSpecs() throws IOException {
         System.out.println("reading game specs");
         //Ignore BEGIN MSG line
-        read.readLine();
+        String line;
+        while (!(line = read.readLine()).startsWith("BEGIN MSG")) {
+        }
         
         mapWidth = Integer.parseInt(readEndOfLine(11));
         mapHeight = Integer.parseInt(readEndOfLine(12));
@@ -121,7 +122,6 @@ public class BombestmanBot {
         initialCountOfBombs = Integer.parseInt(readEndOfLine(23));
         
         //ignore the map...
-        String line;
         while (!(line = read.readLine()).isEmpty()) {
         }
         read.readLine();

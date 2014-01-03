@@ -141,6 +141,7 @@ public class BombestmanBot {
     
     public static void readTurns() throws IOException {
         String turnsLeftLine = read.readLine();
+        System.out.println("turnsLeft:"+turnsLeftLine);
     }
     
     

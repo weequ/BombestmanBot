@@ -1,15 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package bombestmanbot.grid;
 
 import bombestmanbot.grid.bomb.Bomb;
 
-/**
- *
- * @author Antti
- */
 public class Tile {
     private static char TILE_TREASURE = '$';
     private static char TILE_HARDBLOCK = '#';
@@ -30,7 +22,7 @@ public class Tile {
         this.grid = grid;
     }
     
-    public void setChar(char c) {
+    public final void setChar(char c) {
         if (c == TILE_TREASURE || c == TILE_HARDBLOCK || c == TILE_SOFTBLOCK || c == TILE_FLOOR) {
             this.c = c;
         } else {

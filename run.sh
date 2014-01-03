@@ -1,2 +1,5 @@
+echo "starting run.sh"
 ant
-java /build/classes/bombestmanbot/BombestmanBot $1 $2
+echo "ant ran"
+java -cp build/classes/ bombestmanbot.BombestmanBot $1 $2
+echo "finished"

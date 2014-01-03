@@ -59,6 +59,7 @@ public class BombestmanBot {
     
     
     private static void init(String[] args) throws IOException, InterruptedException {
+        System.out.println("initializing game");
         redirectStandardOutput();
         botId = Integer.parseInt(args[0]);
         int port = Integer.parseInt(args[1]);
@@ -68,21 +69,23 @@ public class BombestmanBot {
         write = new PrintWriter(sock.getOutputStream());
         read = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
-        
         readSpecs();
 //        playerCoords = new ArrayList<>(bombersCount);
 //        for (int i = 0; i < bombersCount; i++) {
 //            playerCoords.add(null);//Location is still unkown.
 //        }
         grid = new Grid(mapWidth, mapHeight);
+        System.out.println("game initialized");
     }
     
     
     public static void makeMove() {
+        System.out.println("making the move");
         String[] commands = {"move u", "move d", "move l", "move r", "bomb", "wait"};
         write.append(commands[new Random().nextInt(commands.length)]);
         write.append("\n");
         write.flush();
+        System.out.println("move made");
     }
 
     
@@ -100,6 +103,7 @@ public class BombestmanBot {
 //    TREASURE_CHANGE 0.2
 //    INITIAL_COUNT_OF_BOMBS 2
     public static void readSpecs() throws IOException {
+        System.out.println("reading game specs");
         //Ignore BEGIN MSG line
         read.readLine();
         
@@ -141,6 +145,7 @@ public class BombestmanBot {
     
     
     public static void readMap() throws IOException {
+        System.out.println("reading map");
         String[] lines = new String[mapHeight];
         for (int i = 0; i < mapHeight; i++) {
             lines[i] = read.readLine();
@@ -164,6 +169,7 @@ public class BombestmanBot {
     
     
     public static void readPlayerInfo() throws IOException {
+        System.out.println("reading player info");
         for (int i = 0; i < bombersCount; i++) {
             String playerInfoLine = read.readLine();
             Point newCoords = parseCoordinates(playerInfoLine);
@@ -172,6 +178,7 @@ public class BombestmanBot {
     }
     
     public static void readBombs() throws IOException {
+        System.out.println("reading bombs");
         String line;
         List<Point> bombs = new ArrayList();
         while (!(line = read.readLine()).isEmpty()) {

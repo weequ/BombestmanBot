@@ -1,0 +1,1 @@
+java -cp BombestMan-1.0.jar fi.helsinki.cs.bombestman.game.Game C:\Users\Antti\Documents\GitHub\BombestmanBot C:\Users\Antti\Documents\GitHub\BombestmanBot 9999

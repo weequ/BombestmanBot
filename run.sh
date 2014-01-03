@@ -1,2 +1,2 @@
 ant
-java src/bombestmanbot/BombestmanBot $1 $2
+java /build/classes/bombestmanbot/BombestmanBot $1 $2

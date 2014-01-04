@@ -76,4 +76,9 @@ public class Tile {
         return 0;
     }
     
+    
+    public boolean isTreasure() {
+        return (c == TILE_TREASURE);
+    }
+    
 }

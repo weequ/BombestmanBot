@@ -4,7 +4,9 @@ import bombestmanbot.BombestmanBot;
 import bombestmanbot.grid.bomb.BombField;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class Grid {
@@ -17,7 +19,7 @@ public class Grid {
         tiles = new Tile[heigth][width];
         for (int y = 0; y < tiles.length; y++) {
             for (int x = 0; x < tiles[y].length; x++) {
-                Tile tile = new Tile(this, x, y, '?');
+                Tile tile = new Tile(this, x, y, '@');
                 tiles[y][x] = tile;
             }
         }
@@ -57,6 +59,19 @@ public class Grid {
     public Tile getTile(int x, int y) {
         return tiles[y][x];
     } 
+    
+    
+    public Set<Tile> getTreasureTiles() {
+        Set<Tile> result = new HashSet<>();
+        for (Tile[] row : tiles) {
+            for (Tile tile : row) {
+                if (tile.isTreasure()) {
+                    
+                }
+            }
+        }
+        return null;
+    }
     
     
 }

@@ -23,7 +23,7 @@ public class BombestmanBot {
     private static BufferedReader read;
     private static PrintWriter write;
     //private static ArrayList<Point> playerCoords;
-    private static Grid grid;
+    private static Game game;
     
     
     private static int mapWidth;
@@ -73,7 +73,7 @@ public class BombestmanBot {
 //        for (int i = 0; i < bombersCount; i++) {
 //            playerCoords.add(null);//Location is still unkown.
 //        }
-        grid = new Grid(mapWidth, mapHeight);
+        game = new Game(mapWidth, mapHeight);
         System.out.println("game initialized");
     }
     
@@ -145,7 +145,6 @@ public class BombestmanBot {
         while (!(line = read.readLine()).startsWith("Turns left:")) {
             
         }
-        System.out.println("turnsLeft:"+line);
     }
     
     
@@ -156,7 +155,7 @@ public class BombestmanBot {
             lines[i] = read.readLine();
             System.out.println(lines[i]);
         }
-        grid.update(lines);
+        game.getGrid().update(lines);
     }
     
     
@@ -179,7 +178,7 @@ public class BombestmanBot {
         for (int i = 0; i < bombersCount; i++) {
             String playerInfoLine = read.readLine();
             Point newCoords = parseCoordinates(playerInfoLine);
-            grid.setPlayerCoords(i, newCoords);
+            game.setPlayerCoords(i, newCoords);
         }
     }
     
@@ -191,7 +190,7 @@ public class BombestmanBot {
             bombs.add(parseCoordinates(line));
         }
         //read.readLine();
-        grid.getBombField().update(bombs);
+        game.getBombField().update(bombs);
     }
 
     private static Socket connect(String host, int port) throws InterruptedException {

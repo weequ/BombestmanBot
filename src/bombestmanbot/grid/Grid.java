@@ -1,19 +1,12 @@
 package bombestmanbot.grid;
 
-import bombestmanbot.BombestmanBot;
-import bombestmanbot.grid.bomb.BombField;
-import java.awt.Point;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 public class Grid {
 
     private Tile[][] tiles;
-    private BombField bombField;
-    private List<Point> playerCoords;
     
     public Grid(int width, int heigth) {
         tiles = new Tile[heigth][width];
@@ -23,27 +16,6 @@ public class Grid {
                 tiles[y][x] = tile;
             }
         }
-        
-        playerCoords = new ArrayList<>(BombestmanBot.bombersCount);
-        for (int i = 0; i < BombestmanBot.bombersCount; i++) {
-            playerCoords.add(null);//Location is still unkown.
-        }
-        bombField = new BombField(this);
-    }
-    
-    
-    public void setPlayerCoords(int player, Point coords) {
-        Point oldCoords = playerCoords.get(player);
-        if (oldCoords == null || coords == null) {
-            playerCoords.set(player, coords);
-        } else {
-            oldCoords.setLocation(coords);
-        }
-    }
-  
-    
-    public BombField getBombField() {
-        return bombField;
     }
     
     

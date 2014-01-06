@@ -75,15 +75,17 @@ public class BombestmanBot {
     }
     
     
-    private static void redirectStandardOutput() throws FileNotFoundException {
-        FileOutputStream f = new FileOutputStream("output.txt");
-        System.setOut(new PrintStream(f));
+    private static void redirectStreams() throws FileNotFoundException {
+        FileOutputStream out = new FileOutputStream("output.txt");
+        System.setOut(new PrintStream(out));
+        FileOutputStream err = new FileOutputStream("error.txt");
+        System.setErr(new PrintStream(err));
     }
     
     
     private static void init(String[] args) throws IOException, InterruptedException {
         System.out.println("initializing game");
-        redirectStandardOutput();
+        redirectStreams();
         botId = Integer.parseInt(args[0]);
         int port = Integer.parseInt(args[1]);
         Socket sock = connect("127.0.0.1", port);
@@ -143,16 +145,21 @@ public class BombestmanBot {
         Dijkstra dijkstra = new Dijkstra(game.getGrid(), myTile, tD, wD);
         List<Tile> path = dijkstra.findShortestPath();
         if (path == null || path.size() == 0 || path.get(0).equals(myTile)) {
+            System.out.println("null path or sumthing :D");
             return COMMAND_WAIT;
         } else {
             Tile nextTile = path.get(0);
+            System.out.println("Moving towards a treasure. Current tile = "+myTile+" and next tile = "+nextTile);
             if (nextTile.getChar() == Tile.TILE_SOFTBLOCK) {
                 if (nextTile.isDangerous()) {
+                    System.out.println("next tile very dangerous...");
                     return COMMAND_WAIT;
                 } else {
                     return COMMAND_BOMB;
                 }
             } else {
+                System.out.println("dir = "+myTile.getDirection(nextTile));
+                System.out.println("cmd = "+directionToCommand(myTile.getDirection(nextTile)));
                 return directionToCommand(myTile.getDirection(nextTile));
             }
         }
@@ -171,6 +178,7 @@ public class BombestmanBot {
     
     
     private static String decideNextCommand() {
+        System.out.println("deciding next command");
         if (myTile == null) {//Dead
             return deadStrategy();
         } else if (myTile.isDangerous()) {
@@ -187,7 +195,9 @@ public class BombestmanBot {
     
     public static void makeMove() {
         System.out.println("making the move");
-        write.append(decideNextCommand());
+        String nextCommand = decideNextCommand();
+        System.out.println("next command = "+nextCommand);
+        write.append(nextCommand);
         write.append("\n");
         write.flush();
         System.out.println("move made");

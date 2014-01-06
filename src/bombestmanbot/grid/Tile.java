@@ -106,9 +106,14 @@ public class Tile {
     
     public String getDirection(Tile neighbour) {
         for (String dir : dirs) {
-            if (getNeighbour(dir).equals(neighbour)) return dir;
+            Tile test = getNeighbour(dir);
+            if (test != null && test.equals(neighbour)) return dir;
         }
         return null;
+    }
+    
+    public String toString() {
+        return "("+x+", "+y+", "+c+")";
     }
     
 }

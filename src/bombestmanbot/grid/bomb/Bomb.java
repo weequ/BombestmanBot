@@ -92,24 +92,31 @@ public class Bomb {
         }
     }
     
+    public Set<Tile> getExplosionTiles() {
+        Set<Bomb> explodingBombs = new HashSet<>();
+        explodingBombs.add(this);
+        return getExplosionTilesRec(new HashSet<Bomb>());
+    }
+    
     
     /**
      * Gets the explosion tiles. 
      * Including the tiles that would explode from other bombs if this bomb exploded.
      * @return 
      */
-    public Set<Tile> getExplosionTiles() {
+    public Set<Tile> getExplosionTilesRec(Set<Bomb> explodingBombs) {
         Set<Tile> explosionTiles = new HashSet<>();
         explosionTiles.add(tile);
         String[] directions = {Tile.DIRECTION_UP, Tile.DIRECTION_RIGHT, Tile.DIRECTION_DOWN, Tile.DIRECTION_LEFT};
-        Tile current;
         for (String direction : directions) {
+            Tile current = tile;
             int steps = 0;
-            while((current = tile.getNeighbour(direction)) != null && steps < force) {
+            while((current = current.getNeighbour(direction)) != null && steps < force) {
                 steps++;
                 explosionTiles.add(current);
-                if (current.getBomb() != null) {
-                    explosionTiles.addAll(current.getBomb().getExplosionTiles());
+                if (current.getBomb() != null && !explodingBombs.contains(current.getBomb())) {
+                    explodingBombs.add(current.getBomb());
+                    explosionTiles.addAll(current.getBomb().getExplosionTilesRec(explodingBombs));
                 }
                 if (!current.isPassable()) break;
             }        

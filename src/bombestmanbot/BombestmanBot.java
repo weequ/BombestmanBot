@@ -1,6 +1,14 @@
 package bombestmanbot;
 
 import bombestmanbot.grid.Grid;
+import bombestmanbot.grid.Tile;
+import bombestmanbot.grid.pathfinding.CharTargetDecider;
+import bombestmanbot.grid.pathfinding.CharWeigthDecider;
+import bombestmanbot.grid.pathfinding.Dijkstra;
+import bombestmanbot.grid.pathfinding.SafeTargetDecider;
+import bombestmanbot.grid.pathfinding.TargetDecider;
+import bombestmanbot.grid.pathfinding.TileComparator;
+import bombestmanbot.grid.pathfinding.WeigthDecider;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -11,7 +19,9 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +47,7 @@ public class BombestmanBot {
     public static int bombForce;
     private static int turns;
     private static double treasureChange;
-    private static int initialCountOfBombs;
+    public static int initialCountOfBombs;
     
     
     public static int botId;
@@ -78,9 +88,35 @@ public class BombestmanBot {
     }
     
     
+    
     public static void makeMove() {
         System.out.println("making the move");
         String[] commands = {"move u", "move d", "move l", "move r", "bomb", "wait"};
+        Point myPlayerCoords = game.getPlayerCoords().get(botId);
+        Tile myTile = game.getGrid().getTile(myPlayerCoords.x, myPlayerCoords.y);
+        String myCommand;
+        if (myPlayerCoords == null) {//Dead
+            myCommand = commands[5];
+        } else if (myTile.isDangerous()) {
+            TargetDecider tD = new SafeTargetDecider();
+            Map<Character, Double> weigths = new HashMap<>();
+            weigths.put(Tile.TILE_FLOOR, 1.0);
+            weigths.put(Tile.TILE_TREASURE, 0.99);
+            weigths.put(Tile.TILE_HARDBLOCK, Double.POSITIVE_INFINITY);
+            weigths.put(Tile.TILE_SOFTBLOCK, Double.POSITIVE_INFINITY);
+            WeigthDecider wD = new CharWeigthDecider(weigths);
+            Dijkstra dijkstra = new Dijkstra(game.getGrid(), myTile, tD, wD);
+            //Search closest nondangerous tile
+        } else if (!game.getGrid().getTreasureTiles().isEmpty()) {
+            //:P
+        } else if (game.getBombField().bombsLeft(botId) > 0) {
+            myCommand = commands[4];
+            //place bomb near obstacle
+        } else {
+            //go close to exploding block
+            myCommand = commands[5];
+        }
+        
         write.append(commands[new Random().nextInt(commands.length)]);
         write.append("\n");
         write.flush();
@@ -185,9 +221,10 @@ public class BombestmanBot {
     public static void readBombs() throws IOException {
         System.out.println("reading bombs");
         String line;
-        List<Point> bombs = new ArrayList();
+        Map<Point, Integer> bombs = new HashMap();
         while (!(line = read.readLine()).isEmpty()) {
-            bombs.add(parseCoordinates(line));
+            String owner = line.substring(line.length()-2, line.length()-1);
+            bombs.put(parseCoordinates(line), Integer.parseInt(owner));
         }
         //read.readLine();
         game.getBombField().update(bombs);

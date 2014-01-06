@@ -1,15 +1,16 @@
 package bombestmanbot.grid;
 
 import bombestmanbot.grid.bomb.Bomb;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Tile {
-    private static char TILE_TREASURE = '$';
-    private static char TILE_HARDBLOCK = '#';
-    private static char TILE_SOFTBLOCK = '?';
-    private static char TILE_FLOOR = '.';
+    public static char TILE_TREASURE = '$';
+    public static char TILE_HARDBLOCK = '#';
+    public static char TILE_SOFTBLOCK = '?';
+    public static char TILE_FLOOR = '.';
     
     
-    private Bomb bomb;
     private int x;
     private int y;
     private Grid grid;
@@ -30,6 +31,10 @@ public class Tile {
         }
     }
     
+    public char getChar() {
+        return this.c;
+    }
+    
     public int getX() {
         return x;
     }
@@ -44,7 +49,7 @@ public class Tile {
     }
     
     
-    public Tile getNeighbor(String dir) {
+    public Tile getNeighbour(String dir) {
         if (dir.equals("up")) {
             return grid.getTile(x, y-1);
         } else if (dir.equals("right")) {
@@ -57,19 +62,28 @@ public class Tile {
         return null;
     }
     
+    public Set<Tile> getNeighbours() {
+        Set<Tile> result = new HashSet<>();
+        String[] dirs = {"up", "right", "down", "left"};
+        for (String dir : dirs) {
+            Tile neighbourTile = getNeighbour(dir);
+            if (neighbourTile != null) {
+                result.add(neighbourTile);
+            }
+        }
+        return result;
+    }
+    
+    
     public Bomb getBomb() {
-        return this.bomb;
+        return grid.getGame().getBombField().getBombAt(this);
     }
     
     
-    public void setBomb(Bomb bomb) {
-        this.bomb = bomb;
-    }
-    
-    
-    public boolean isExploding() {
+    public boolean isPassable() {
         return (c == TILE_FLOOR || c == TILE_TREASURE);
     }
+  
     
     
     public double getExplosionProbability(int turns) {
@@ -79,6 +93,10 @@ public class Tile {
     
     public boolean isTreasure() {
         return (c == TILE_TREASURE);
+    }
+    
+    public boolean isDangerous() {
+        return (grid.getGame().getBombField().getExplosionTiles().contains(this));
     }
     
 }

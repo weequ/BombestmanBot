@@ -16,14 +16,21 @@ public class Bomb {
     public int combinationsLeft;
     public int force;
     private Tile tile;
+    private int owner;
     
-    public Bomb(int force, int dices, int sides, Tile tile) {
+    public Bomb(int owner, int force, int dices, int sides, Tile tile) {
+        this.owner = owner;
         this.tile = tile;
         this.force = force;
         this.dices = dices;
         this.sides = sides;
         age = 0;
         combinationsLeft = initialCombinations();
+    }
+    
+    
+    public int getOwner() {
+        return owner;
     }
     
     public Tile getTile() {
@@ -91,19 +98,19 @@ public class Bomb {
      * Including the tiles that would explode from other bombs if this bomb exploded.
      * @return 
      */
-    private Set<Tile> getExplosionTiles() {
+    public Set<Tile> getExplosionTiles() {
         Set<Tile> explosionTiles = new HashSet<>();
         String[] directions = {"up", "right", "down", "left"};
         Tile current;
         for (String direction : directions) {
             int steps = 0;
-            while((current = tile.getNeighbor(direction)) != null && steps < force) {
+            while((current = tile.getNeighbour(direction)) != null && steps < force) {
                 steps++;
                 explosionTiles.add(current);
                 if (current.getBomb() != null) {
                     explosionTiles.addAll(current.getBomb().getExplosionTiles());
                 }
-                if (!current.isExploding()) break;
+                if (!current.isPassable()) break;
             }        
         }
         return explosionTiles;
@@ -137,9 +144,9 @@ public class Bomb {
     
     
     public static void main(String[] args) throws AlreadyExplodedException {
-        Bomb b = new Bomb(4, 2, 7, null);
-        double d = b.getExplosionProbabilityOnTurn(14);
-        System.out.println(d);
+//        Bomb b = new Bomb(4, 2, 7, null);
+//        double d = b.getExplosionProbabilityOnTurn(14);
+//        System.out.println(d);
     }
     
     

@@ -20,12 +20,16 @@ public class Game {
     private Grid grid;
     
     public Game(int mapWidth, int mapHeigth) {
-        this.grid = new Grid(mapWidth, mapHeigth);
+        this.grid = new Grid(this, mapWidth, mapHeigth);
         this.bombField = new BombField(grid);
         playerCoords = new ArrayList<>(BombestmanBot.bombersCount);
         for (int i = 0; i < BombestmanBot.bombersCount; i++) {
             playerCoords.add(null);//Location is still unkown.
         }
+    }
+    
+    public List<Point> getPlayerCoords() {
+        return playerCoords;
     }
     
     public void setPlayerCoords(int player, Point coords) {

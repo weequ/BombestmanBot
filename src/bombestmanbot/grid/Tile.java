@@ -5,11 +5,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Tile {
-    public static char TILE_TREASURE = '$';
-    public static char TILE_HARDBLOCK = '#';
-    public static char TILE_SOFTBLOCK = '?';
-    public static char TILE_FLOOR = '.';
+    public static final char TILE_TREASURE = '$';
+    public static final char TILE_HARDBLOCK = '#';
+    public static final char TILE_SOFTBLOCK = '?';
+    public static final char TILE_FLOOR = '.';
     
+    public static final String DIRECTION_UP = "up";
+    public static final String DIRECTION_RIGHT = "right";
+    public static final String DIRECTION_DOWN = "down";
+    public static final String DIRECTION_LEFT = "left";
+    
+    private static final String[] dirs = {DIRECTION_UP, DIRECTION_RIGHT, DIRECTION_DOWN, DIRECTION_LEFT};
     
     private int x;
     private int y;
@@ -50,13 +56,13 @@ public class Tile {
     
     
     public Tile getNeighbour(String dir) {
-        if (dir.equals("up")) {
+        if (dir.equals(DIRECTION_UP)) {
             return grid.getTile(x, y-1);
-        } else if (dir.equals("right")) {
+        } else if (dir.equals(DIRECTION_RIGHT)) {
             return grid.getTile(x+1, y);
-        } else  if (dir.equals("down")) {
+        } else  if (dir.equals(DIRECTION_DOWN)) {
             return grid.getTile(x, y+1);
-        } else if (dir.equals("left")) {
+        } else if (dir.equals(DIRECTION_LEFT)) {
             return grid.getTile(x-1, y);
         }
         return null;
@@ -64,7 +70,6 @@ public class Tile {
     
     public Set<Tile> getNeighbours() {
         Set<Tile> result = new HashSet<>();
-        String[] dirs = {"up", "right", "down", "left"};
         for (String dir : dirs) {
             Tile neighbourTile = getNeighbour(dir);
             if (neighbourTile != null) {
@@ -97,6 +102,13 @@ public class Tile {
     
     public boolean isDangerous() {
         return (grid.getGame().getBombField().getExplosionTiles().contains(this));
+    }
+    
+    public String getDirection(Tile neighbour) {
+        for (String dir : dirs) {
+            if (getNeighbour(dir).equals(neighbour)) return dir;
+        }
+        return null;
     }
     
 }

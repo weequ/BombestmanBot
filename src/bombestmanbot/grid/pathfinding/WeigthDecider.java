@@ -4,5 +4,5 @@ import bombestmanbot.grid.Tile;
 
 
 public interface WeigthDecider {
-    public double getWeigth(Tile tile);
+    public double getWeigth(Tile tile, double currentDist);
 }

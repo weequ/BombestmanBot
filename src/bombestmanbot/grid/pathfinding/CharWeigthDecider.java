@@ -13,7 +13,7 @@ public class CharWeigthDecider implements WeigthDecider {
     }
     
     @Override
-    public double getWeigth(Tile tile) {
+    public double getWeigth(Tile tile, double currentDist) {
         if (tile.isDangerous()) return 1000;
         return weigths.get(tile.getChar());
     }

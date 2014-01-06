@@ -1,13 +1,12 @@
 package bombestmanbot;
 
-import bombestmanbot.grid.Grid;
 import bombestmanbot.grid.Tile;
+import bombestmanbot.grid.pathfinding.BasicWeigthDecider;
 import bombestmanbot.grid.pathfinding.CharTargetDecider;
-import bombestmanbot.grid.pathfinding.CharWeigthDecider;
 import bombestmanbot.grid.pathfinding.Dijkstra;
 import bombestmanbot.grid.pathfinding.SafeTargetDecider;
 import bombestmanbot.grid.pathfinding.TargetDecider;
-import bombestmanbot.grid.pathfinding.TileComparator;
+import bombestmanbot.grid.pathfinding.TreasureWeighthDecider;
 import bombestmanbot.grid.pathfinding.WeigthDecider;
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -18,7 +17,6 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +33,12 @@ public class BombestmanBot {
     //private static ArrayList<Point> playerCoords;
     private static Game game;
     
+    private static final String COMMAND_WAIT = "wait";
+    private static final String COMMAND_BOMB = "bomb";
+    private static final String COMMAND_MOVE_UP = "move u";
+    private static final String COMMAND_MOVE_RIGHT = "move r";
+    private static final String COMMAND_MOVE_DOWN = "move d";
+    private static final String COMMAND_MOVE_LEFT = "move l";
     
     private static int mapWidth;
     private static int mapHeight;
@@ -48,7 +52,7 @@ public class BombestmanBot {
     private static int turns;
     private static double treasureChange;
     public static int initialCountOfBombs;
-    
+    private static Tile myTile;
     
     public static int botId;
     
@@ -56,7 +60,17 @@ public class BombestmanBot {
         init(args);
         while (true) {
             readGame();
+            updateMyPlayer();
             makeMove();
+        }
+    }
+    
+    public static void updateMyPlayer() {
+        Point myPlayerCoords = game.getPlayerCoords().get(botId);
+        if (myPlayerCoords == null) {
+            myTile = null;
+        } else {
+            myTile = game.getGrid().getTile(myPlayerCoords);
         }
     }
     
@@ -88,36 +102,92 @@ public class BombestmanBot {
     }
     
     
+    public static String deadStrategy() {
+        System.out.println("using dead strategy");
+        return COMMAND_WAIT;
+    }
+    
+    
+    public static String directionToCommand(String direction) {
+        if (direction.equals(Tile.DIRECTION_UP)) {
+            return COMMAND_MOVE_UP;
+        } else if (direction.equals(Tile.DIRECTION_RIGHT)) {
+            return COMMAND_MOVE_RIGHT;
+        } else if (direction.equals(Tile.DIRECTION_DOWN)) {
+            return COMMAND_MOVE_DOWN;
+        } else if (direction.equals(Tile.DIRECTION_LEFT)) {
+            return COMMAND_MOVE_LEFT;
+        } else {
+            return null;
+        }
+    }
+    
+    
+    public static String dangerousStrategy() {
+        System.out.println("Using dangerous strategy");
+        TargetDecider tD = new SafeTargetDecider();
+        WeigthDecider wD = new BasicWeigthDecider();
+        Dijkstra dijkstra = new Dijkstra(game.getGrid(), myTile, tD, wD);
+        List<Tile> path = dijkstra.findShortestPath();
+        if (path == null || path.size() == 0 || path.get(0).equals(myTile)) {
+            return COMMAND_WAIT;
+        } else {
+            return directionToCommand(myTile.getDirection(path.get(0)));
+        }
+    }
+    
+    public static String treasureStrategy() {
+        System.out.println("Using treasure strategy");
+        TargetDecider tD = new CharTargetDecider(new char[]{Tile.TILE_TREASURE});
+        WeigthDecider wD = new TreasureWeighthDecider();
+        Dijkstra dijkstra = new Dijkstra(game.getGrid(), myTile, tD, wD);
+        List<Tile> path = dijkstra.findShortestPath();
+        if (path == null || path.size() == 0 || path.get(0).equals(myTile)) {
+            return COMMAND_WAIT;
+        } else {
+            Tile nextTile = path.get(0);
+            if (nextTile.getChar() == Tile.TILE_SOFTBLOCK) {
+                if (nextTile.isDangerous()) {
+                    return COMMAND_WAIT;
+                } else {
+                    return COMMAND_BOMB;
+                }
+            } else {
+                return directionToCommand(myTile.getDirection(nextTile));
+            }
+        }
+    }
+    
+    
+    public static String explodingStrategy() {
+        System.out.println("using exploding strategy");
+        return COMMAND_BOMB;
+    }
+    
+    public static String preparingStrategy() {
+        System.out.println("using preparing stragy");
+        return COMMAND_WAIT;
+    }
+    
+    
+    private static String decideNextCommand() {
+        if (myTile == null) {//Dead
+            return deadStrategy();
+        } else if (myTile.isDangerous()) {
+            return dangerousStrategy();
+        } else if (!game.getGrid().getTreasureTiles().isEmpty()) {
+            return treasureStrategy();
+        } else if (game.getBombField().bombsLeft(botId) > 0) {
+            return explodingStrategy();
+        } else {
+            return preparingStrategy();
+        }
+    }
+    
     
     public static void makeMove() {
         System.out.println("making the move");
-        String[] commands = {"move u", "move d", "move l", "move r", "bomb", "wait"};
-        Point myPlayerCoords = game.getPlayerCoords().get(botId);
-        Tile myTile = game.getGrid().getTile(myPlayerCoords.x, myPlayerCoords.y);
-        String myCommand;
-        if (myPlayerCoords == null) {//Dead
-            myCommand = commands[5];
-        } else if (myTile.isDangerous()) {
-            TargetDecider tD = new SafeTargetDecider();
-            Map<Character, Double> weigths = new HashMap<>();
-            weigths.put(Tile.TILE_FLOOR, 1.0);
-            weigths.put(Tile.TILE_TREASURE, 0.99);
-            weigths.put(Tile.TILE_HARDBLOCK, Double.POSITIVE_INFINITY);
-            weigths.put(Tile.TILE_SOFTBLOCK, Double.POSITIVE_INFINITY);
-            WeigthDecider wD = new CharWeigthDecider(weigths);
-            Dijkstra dijkstra = new Dijkstra(game.getGrid(), myTile, tD, wD);
-            //Search closest nondangerous tile
-        } else if (!game.getGrid().getTreasureTiles().isEmpty()) {
-            //:P
-        } else if (game.getBombField().bombsLeft(botId) > 0) {
-            myCommand = commands[4];
-            //place bomb near obstacle
-        } else {
-            //go close to exploding block
-            myCommand = commands[5];
-        }
-        
-        write.append(commands[new Random().nextInt(commands.length)]);
+        write.append(decideNextCommand());
         write.append("\n");
         write.flush();
         System.out.println("move made");

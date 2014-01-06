@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package bombestmanbot;
 
 import bombestmanbot.grid.Grid;
@@ -10,10 +6,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Antti
- */
+
 public class Game {
     private BombField bombField;
     private List<Point> playerCoords;

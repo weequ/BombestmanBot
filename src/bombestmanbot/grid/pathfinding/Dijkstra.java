@@ -42,7 +42,7 @@ public class Dijkstra {
             double currentDist = distances.get(current);
             for (Tile neighbour : current.getNeighbours()) {
                 Double dist = distances.get(neighbour);
-                double newDist = currentDist+1;
+                double newDist = currentDist+weigthDecider.getWeigth(neighbour, currentDist);
                 if (dist == null) {//naapurissa ei käyty
                     previous.put(neighbour, current);
                     distances.put(neighbour, newDist);

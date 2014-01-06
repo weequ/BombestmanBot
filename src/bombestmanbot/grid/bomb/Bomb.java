@@ -100,7 +100,8 @@ public class Bomb {
      */
     public Set<Tile> getExplosionTiles() {
         Set<Tile> explosionTiles = new HashSet<>();
-        String[] directions = {"up", "right", "down", "left"};
+        explosionTiles.add(tile);
+        String[] directions = {Tile.DIRECTION_UP, Tile.DIRECTION_RIGHT, Tile.DIRECTION_DOWN, Tile.DIRECTION_LEFT};
         Tile current;
         for (String direction : directions) {
             int steps = 0;

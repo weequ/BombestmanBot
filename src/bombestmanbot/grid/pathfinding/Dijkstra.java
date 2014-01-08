@@ -24,8 +24,12 @@ public class Dijkstra {
         this.weigthDecider = weigthDecider;
     }
     
-    
-    public List<Tile> findShortestPath() {
+    /**
+     * 
+     * @param output path
+     * @return length
+     */
+    public Double findShortestPath(LinkedList<Tile> output) {
         Map<Tile, Tile> previous = new HashMap<>();
         Map<Tile, Double> distances = new HashMap<>();
         TileComparator tileComparator = new TileComparator(distances);
@@ -37,7 +41,12 @@ public class Dijkstra {
         while (!tileQueue.isEmpty()) {
             current = tileQueue.poll();
             if (targetDecider.isTarget(current)) { //Maali löytyi
-                break;
+                if (current.equals(start)) return 0.0;
+                output.push(current);
+                while (previous.get(previous.get(output.peek())) != null) {
+                    output.push(previous.get(output.peek()));
+                }
+                return distances.get(current);
             }
             double currentDist = distances.get(current);
             for (Tile neighbour : current.getNeighbours()) {
@@ -59,13 +68,7 @@ public class Dijkstra {
                 }
             }
         }
-        if (!targetDecider.isTarget(current)) return null;
-        LinkedList<Tile> path = new LinkedList<>();
-        path.push(current);
-        while (previous.get(path.peek()) != start) {
-            path.push(previous.get(path.peek()));
-        }
-        return path;
+        return null; 
     }
     
 }

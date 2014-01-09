@@ -67,7 +67,10 @@ public class ExplodingStrategy implements Strategy {
     
     public boolean threateningEnemies() {
         List<Point> playerCoords = BombestmanBot.game.getPlayerCoords();
-        for (Point p : playerCoords) {
+        for (int i = 0; i < playerCoords.size(); i++) {
+            if (i == BombestmanBot.botId) continue;
+            Point p = playerCoords.get(i);
+            
             if (p == null) continue;
             Bomb testBomb = new Bomb(BombestmanBot.botId, BombestmanBot.bombForce, BombestmanBot.bombTimeDice, BombestmanBot.bombeTimerSides, BombestmanBot.myTile);
             //Simulate escaping as him:

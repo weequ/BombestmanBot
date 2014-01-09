@@ -10,6 +10,7 @@ import bombestmanbot.grid.pathfinding.TargetDecider;
 import bombestmanbot.grid.pathfinding.WeigthDecider;
 import bombestmanbot.strategy.RootStrategy;
 import java.awt.Point;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,6 +68,12 @@ public class BombestmanBot {
         System.setOut(new PrintStream(out));
         FileOutputStream err = new FileOutputStream("error.txt");
         System.setErr(new PrintStream(err));
+        File file = new File(".");
+        if (file.isDirectory()) System.out.println("found directory.."+file.getAbsolutePath());
+        file = new File("/");
+        if (file.isDirectory()) System.out.println("found directory2.."+file.getAbsolutePath());
+        file = new File("");
+        if (file.isDirectory()) System.out.println("found directory3.."+file.getAbsolutePath());
     }
     
     
@@ -107,13 +114,44 @@ public class BombestmanBot {
         TargetDecider tD = new SafeTargetDecider();
         WeigthDecider wD = new BasicWeigthDecider();
         Dijkstra dijkstra = new Dijkstra(game.getGrid(), myTile, tD, wD);
-        System.out.println("c1");
         return dijkstra.findShortestPath(output);
     }
     
     
+    
+    
+    
+    
+    public static boolean canEscape(final Bomb testBomb2) {
+        game.getBombField().addBomb(testBomb2);
+        LinkedList<Tile> output = new LinkedList<>();
+        TargetDecider tD = new SafeTargetDecider();
+        WeigthDecider wD = new WeigthDecider() {
+            @Override
+            public double getWeigth(Tile tile, double currentDist) {
+                for (Bomb bomb : tile.getThreateningBombs()) {
+                    if (!bomb.equals(testBomb2)) return Double.POSITIVE_INFINITY;
+                }
+                if (!tile.isPassable()) {
+                    return Double.POSITIVE_INFINITY;
+                } else {
+                    if (tile.isDangerous()) {
+                        return 100;
+                    } else {
+                        return 1;
+                    }
+                }
+            }
+        };
+        Dijkstra dijkstra = new Dijkstra(game.getGrid(), myTile, tD, wD);
+        Double length = dijkstra.findShortestPath(output);
+        game.getBombField().removeBomb(testBomb2);
+        return (length != null && output.size() < 4);
+        
+    }
+    
+    
     public static boolean safeToBomb() {
-        System.out.println("a1");
         //Simulate escaping from the current tile b4 droppin bomb:
         Bomb testBomb = new Bomb(botId, 0, bombTimeDice, bombeTimerSides, myTile);
         game.getBombField().addBomb(testBomb);
@@ -121,18 +159,11 @@ public class BombestmanBot {
         Double length = pathToNearestSafe(output);
         game.getBombField().removeBomb(testBomb);
         
-        System.out.println("b1");
-        System.out.println("length = "+length);
         if (length == null || length > 3) return false;
-        System.out.println("a2");
         //simulate dropping a bomb
-        testBomb = new Bomb(botId, bombForce, bombTimeDice, bombeTimerSides, myTile);
-        game.getBombField().addBomb(testBomb);
-        output = new LinkedList<>();
-        System.out.println("a3");
-        length = pathToNearestSafe(output);
-        game.getBombField().removeBomb(testBomb);
-        return (length != null && output.size() < 4);
+        final Bomb testBomb2 = new Bomb(botId, bombForce, bombTimeDice, bombeTimerSides, myTile);
+        return (canEscape(testBomb2));
+        
     }
     
     
@@ -143,21 +174,16 @@ public class BombestmanBot {
                     
             public List<Tile> getThreateningTiles() {
                 List<Tile> result = new ArrayList<>();
-                System.out.println("bombForce = "+bombForce);
                 String[] directions = new String[] {Tile.DIRECTION_DOWN, Tile.DIRECTION_LEFT, Tile.DIRECTION_RIGHT, Tile.DIRECTION_UP};
                 for (String direction : directions) {
                     Tile current = tile;
                     int steps = 0;
                     while((current = current.getNeighbour(direction)) != null && steps < bombForce) {
-                        System.out.println("steps was :"+steps);
                         steps++;
-                        System.out.println("investigating tile:"+current);
                         if (!current.isPassable()) break;
-                        System.out.println("it is passable O_o");
                         result.add(current);
                     }
                 }
-                System.out.println(result.size()+" threatening tiles found.");
                 return result;
             }        
             

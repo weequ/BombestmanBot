@@ -63,5 +63,16 @@ public class Grid {
         return result;
     }
     
+    public Set<Tile> getExplodingSoftBlocks() {
+        Set<Tile> explosionTiles = game.getBombField().getExplosionTiles();
+        Set<Tile> result = new HashSet<>();
+        for (Tile tile : explosionTiles) {
+            if (tile.getChar() == Tile.TILE_SOFTBLOCK) {
+                result.add(tile);
+            }
+        }
+        return result;
+    }
+    
     
 }

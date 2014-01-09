@@ -159,7 +159,6 @@ public class Communication {
     
     
     public void readPlayerInfo() throws IOException {
-        System.out.println("reading player info");
         for (int i = 0; i < bombersCount; i++) {
             String playerInfoLine = read.readLine();
             Point newCoords = parseCoordinates(playerInfoLine);
@@ -169,15 +168,12 @@ public class Communication {
     
     
     public void readBombs() throws IOException {
-        System.out.println("reading bombs");
         String line;
         Map<Point, Integer> bombs = new HashMap();
         while (!(line = read.readLine()).isEmpty()) {
-            System.out.println("reading bombs zzz");
             String owner = line.substring(line.length()-2, line.length()-1);
             bombs.put(parseCoordinates(line), Integer.parseInt(owner));
         }
-        System.out.println("reading bombs3");
         //read.readLine();
         game.getBombField().update(bombs);
     }

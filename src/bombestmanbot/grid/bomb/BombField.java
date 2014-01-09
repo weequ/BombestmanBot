@@ -21,6 +21,10 @@ public class BombField {
     private Grid grid;
     
     
+    public Map<Bomb, Set<Tile>> getField() {
+        return explosionTiles;
+    }
+    
     public BombField(Grid grid) {
         this.grid = grid;
         bombs = new ArrayList<>();

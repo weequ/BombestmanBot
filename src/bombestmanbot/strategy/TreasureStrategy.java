@@ -26,19 +26,21 @@ public class TreasureStrategy implements Strategy {
         LinkedList<Tile> path = new LinkedList<>();
         Double length = dijkstra.findShortestPath(path);
         if (length == null) {
-            System.out.println("null path or sumthing :D");
             return Communication.COMMAND_WAIT;
         } else {
             for (Tile tile : path) {
                 if (tile.getChar() == Tile.TILE_SOFTBLOCK) {
-                    System.out.println("softblock found..");
                     path = new LinkedList<>();
                     length = BombestmanBot.pathToNearestTileThatCanThreatenTile(tile, path);
-                    if (length == null) {
-                        System.out.println("null length");
+                    System.out.println("navigating to nearesttilethatcantreatentile");
+                    if (length == null || length >= 100) {
+                        if (length == null) {
+                            System.out.println("abc");
+                        } else {
+                            System.out.println("123");
+                        }
                         return Communication.COMMAND_WAIT;
                     } else if (length == 0) {
-                        System.out.println("length 1");
                         return Communication.COMMAND_BOMB;
                     } else {
                         return directionToCommand(BombestmanBot.myTile.getDirection(path.get(0)));
@@ -46,7 +48,6 @@ public class TreasureStrategy implements Strategy {
                     
                 }
             }
-            System.out.println("no softblock found.");
             
             Tile nextTile = path.get(0);
            
@@ -57,8 +58,6 @@ public class TreasureStrategy implements Strategy {
                     return Communication.COMMAND_BOMB;
                 }
             } else {
-                System.out.println("dir = "+BombestmanBot.myTile.getDirection(nextTile));
-                System.out.println("cmd = "+directionToCommand(BombestmanBot.myTile.getDirection(nextTile)));
                 return directionToCommand(BombestmanBot.myTile.getDirection(nextTile));
             }
         }

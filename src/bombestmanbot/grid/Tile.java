@@ -2,6 +2,7 @@ package bombestmanbot.grid;
 
 import bombestmanbot.grid.bomb.Bomb;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Tile {
@@ -116,4 +117,12 @@ public class Tile {
         return "("+x+", "+y+", "+c+")";
     }
     
+    
+    public Set<Bomb> getThreateningBombs() {
+        Set<Bomb> result = new HashSet<>();
+        for (Map.Entry<Bomb, Set<Tile>> entry : grid.getGame().getBombField().getField().entrySet()) {
+            if (entry.getValue().contains(this)) result.add(entry.getKey());
+        }
+        return result;
+    }
 }

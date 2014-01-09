@@ -16,6 +16,7 @@ public class RootStrategy implements Strategy {
     private Strategy preparingStrategy = new PreparingStrategy();
     private Strategy treasureStrategy = new TreasureStrategy();
     private Strategy dangerousStrategy = new DangerousStrategy();
+    private LootinStrategy lootingStrategy = new LootinStrategy();
     private static Strategy instance = new RootStrategy();
     
     public static Strategy getInstance() {
@@ -36,6 +37,8 @@ public class RootStrategy implements Strategy {
             myStrategy = deadStrategy;
         } else if (myTile.isDangerous()) {
             myStrategy = dangerousStrategy;
+        }else if (lootingStrategy.shouldExecute()) {
+            myStrategy = lootingStrategy;
         } else if (!game.getGrid().getTreasureTiles().isEmpty()) {
             myStrategy = treasureStrategy;
         } else if (game.getBombField().bombsLeft(botId) > 0) {

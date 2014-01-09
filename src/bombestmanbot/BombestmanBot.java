@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,14 +67,8 @@ public class BombestmanBot {
     private static void redirectStreams() throws FileNotFoundException {
         FileOutputStream out = new FileOutputStream("output.txt");
         System.setOut(new PrintStream(out));
-        FileOutputStream err = new FileOutputStream("error.txt");
+        FileOutputStream err = new FileOutputStream("error"+new Date()+".txt");
         System.setErr(new PrintStream(err));
-        File file = new File(".");
-        if (file.isDirectory()) System.out.println("found directory.."+file.getAbsolutePath());
-        file = new File("/");
-        if (file.isDirectory()) System.out.println("found directory2.."+file.getAbsolutePath());
-        file = new File("");
-        if (file.isDirectory()) System.out.println("found directory3.."+file.getAbsolutePath());
     }
     
     

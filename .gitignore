@@ -3,3 +3,4 @@ build
 output.txt
 dist
 error.txt
+error*.txt

@@ -37,10 +37,10 @@ public class RootStrategy implements Strategy {
             myStrategy = deadStrategy;
         } else if (myTile.isDangerous()) {
             myStrategy = dangerousStrategy;
-        }else if (lootingStrategy.shouldExecute()) {
-            myStrategy = lootingStrategy;
-        } else if (!game.getGrid().getTreasureTiles().isEmpty()) {
+        } else if (!game.getGrid().getTreasureTiles().isEmpty() && game.getBombField().bombsLeft(botId) == bombestmanbot.BombestmanBot.initialCountOfBombs) {
             myStrategy = treasureStrategy;
+        } else if (lootingStrategy.shouldExecute()) {
+            myStrategy = lootingStrategy;
         } else if (game.getBombField().bombsLeft(botId) > 0) {
             myStrategy = explodingStrategy;
         } else {

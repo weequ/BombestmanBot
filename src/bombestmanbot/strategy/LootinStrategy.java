@@ -5,7 +5,9 @@
 package bombestmanbot.strategy;
 
 import bombestmanbot.BombestmanBot;
+import static bombestmanbot.BombestmanBot.botId;
 import static bombestmanbot.BombestmanBot.directionToCommand;
+import static bombestmanbot.BombestmanBot.game;
 import static bombestmanbot.BombestmanBot.myTile;
 import bombestmanbot.Communication;
 import bombestmanbot.grid.Tile;
@@ -24,8 +26,9 @@ public class LootinStrategy implements Strategy {
     
     private String command = null;
     
+    
+    
     public boolean shouldExecute() {
-        System.out.println("thinking");
         final Set<Tile> tiles = BombestmanBot.game.getGrid().getExplodingSoftBlocks();
         WeigthDecider wD = new BasicWeigthDecider();
         TargetDecider tD = new TargetDecider() {
@@ -43,7 +46,7 @@ public class LootinStrategy implements Strategy {
         Dijkstra dijkstra = new Dijkstra(BombestmanBot.game.getGrid(), BombestmanBot.myTile, tD, wD);
         LinkedList<Tile> path = new LinkedList<>();
         Double length = dijkstra.findShortestPath(path);
-        if (length == null|| path.size() > 6) {
+        if (length == null|| path.size() > 7) {
             System.out.println("2 ("+path.size()+")");
             command = null;
             return false;

@@ -34,11 +34,6 @@ public class TreasureStrategy implements Strategy {
                     length = BombestmanBot.pathToNearestTileThatCanThreatenTile(tile, path);
                     System.out.println("navigating to nearesttilethatcantreatentile");
                     if (length == null || length >= 100) {
-                        if (length == null) {
-                            System.out.println("abc");
-                        } else {
-                            System.out.println("123");
-                        }
                         return Communication.COMMAND_WAIT;
                     } else if (length == 0) {
                         return Communication.COMMAND_BOMB;
